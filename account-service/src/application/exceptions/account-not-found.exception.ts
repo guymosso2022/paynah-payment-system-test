@@ -1,6 +1,6 @@
-export class AccountNotFoundException extends Error {
+export class AccountNotFoundApplicationException extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'AccountNotFoundException';
+    this.name = 'AccountNotFoundApplicationException';
   }
 }
