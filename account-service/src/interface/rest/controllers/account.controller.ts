@@ -5,6 +5,8 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { CreditAccountCommand } from 'src/application/commands/credit-account.command';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
 import { CreditAccountDto } from '../dtos/credit-account.dto';
+import { DebitAccountCommand } from 'src/application/commands/debit-account.command';
+import { DebitAccountDto } from '../dtos/debit-accont.dto';
 
 @Controller('accounts')
 export class AccountController {
@@ -31,6 +33,16 @@ export class AccountController {
       creditAccountDto.amount,
       creditAccountDto.currency,
       creditAccountDto.accountId,
+    );
+    return this.commandBus.execute(command);
+  }
+
+  @Post('debits')
+  async createAccountDebit(@Body() debitAccountDto: DebitAccountDto) {
+    const command = new DebitAccountCommand(
+      debitAccountDto.amount,
+      debitAccountDto.currency,
+      debitAccountDto.accountId,
     );
     return this.commandBus.execute(command);
   }
