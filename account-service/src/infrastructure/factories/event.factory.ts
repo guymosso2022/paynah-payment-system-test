@@ -6,6 +6,8 @@ import {
 } from 'src/domain/ports/unique-id-generator.port';
 import { AccountCreditedIntegrationEvent } from '../events/account-credited-integration.event';
 import { KafkaTopicNotFoundException } from '../exceptions/kafka-topicnot-found.exception';
+import { AccountDebitedEvent } from 'src/domain/events/account-debited.event';
+import { AccountDebitedIntegrationEvent } from '../events/account-debited-integration.event';
 
 export class EventFactory {
   constructor(
@@ -20,6 +22,15 @@ export class EventFactory {
         domainEvent.accountId,
         domainEvent.balance,
         'CREDIT',
+        new Date(),
+      );
+    }
+    if (domainEvent instanceof AccountDebitedEvent) {
+      return new AccountDebitedIntegrationEvent(
+        this.uniqueIdGenerator.generate(),
+        domainEvent.accountId,
+        domainEvent.balance,
+        'DEBIT',
         new Date(),
       );
     }
