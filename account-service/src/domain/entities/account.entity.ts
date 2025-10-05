@@ -40,4 +40,18 @@ export class Account {
   getBalance(): Money {
     return this.balance;
   }
+
+  getId(): AccountId {
+    return this.id;
+  }
+
+  toJSON() {
+    return {
+      id: this.id.value,
+      balance: this.balance.value,
+      currency: this.balance.getCurrency(),
+      createdAt: this.createdAt ?? new Date(),
+      updatedAt: this.updatedAt,
+    };
+  }
 }

@@ -1,37 +1,26 @@
+import { CurrencyMismatchDomainException } from '../exceptions/currency-mismatch.exception';
 import { InvalidMoneyValueDomainException } from '../exceptions/invalid-money-value-domain.exception';
 import { NegativeMoneyValueDomainException } from '../exceptions/megative-money-value-domain.exception';
 
 export class Money {
-  private constructor(private readonly amount: number) {
-    if (!Number.isFinite(amount)) {
+  private constructor(
+    private readonly amount: number,
+    private readonly currency: string,
+  ) {
+    if (!Number.isFinite(amount))
       throw new InvalidMoneyValueDomainException(amount);
-    }
-    if (amount < 0) {
-      throw new NegativeMoneyValueDomainException(amount);
-    }
+    if (amount < 0) throw new NegativeMoneyValueDomainException(amount);
   }
 
   get value(): number {
     return this.amount;
   }
 
-  static from(amount: number): Money {
-    return new Money(amount);
+  getCurrency(): string {
+    return this.currency;
   }
 
-  add(other: Money): Money {
-    return new Money(this.amount + other.amount);
-  }
-
-  lessThan(other: Money): boolean {
-    return this.amount < other.amount;
-  }
-
-  subtract(other: Money): Money {
-    const result = this.amount - other.amount;
-    if (result < 0) {
-      throw new NegativeMoneyValueDomainException(result);
-    }
-    return new Money(result);
+  static from(amount: number, currency: string = 'XOF'): Money {
+    return new Money(amount, currency);
   }
 }
