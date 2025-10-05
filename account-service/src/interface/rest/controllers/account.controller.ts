@@ -2,6 +2,9 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { CreateAccountDto } from '../dtos/create-account.dto';
 import { CreateAccountCommand } from 'src/application/commands/create-account.command';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { CreditAccountCommand } from 'src/application/commands/credit-account.command';
+import { AccountId } from 'src/domain/value-objects/account-id.vo';
+import { CreditAccountDto } from '../dtos/credit-account.dto';
 
 @Controller('accounts')
 export class AccountController {
@@ -18,6 +21,16 @@ export class AccountController {
     const command = new CreateAccountCommand(
       createAccountDto.amount,
       createAccountDto.currency,
+    );
+    return this.commandBus.execute(command);
+  }
+
+  @Post('credits')
+  async createAccountCredit(@Body() creditAccountDto: CreditAccountDto) {
+    const command = new CreditAccountCommand(
+      creditAccountDto.amount,
+      creditAccountDto.currency,
+      creditAccountDto.accountId,
     );
     return this.commandBus.execute(command);
   }
