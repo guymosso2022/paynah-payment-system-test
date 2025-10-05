@@ -1,0 +1,24 @@
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateAccountDto } from '../dtos/create-account.dto';
+import { CreateAccountCommand } from 'src/application/commands/create-account.command';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
+
+@Controller('accounts')
+export class AccountController {
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
+
+  @Post()
+  async create(
+    @Body()
+    createAccountDto: CreateAccountDto,
+  ) {
+    const command = new CreateAccountCommand(
+      createAccountDto.amount,
+      createAccountDto.currency,
+    );
+    return this.commandBus.execute(command);
+  }
+}
