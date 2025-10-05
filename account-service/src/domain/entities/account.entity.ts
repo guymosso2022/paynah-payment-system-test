@@ -1,9 +1,11 @@
+import { AggregateRoot } from '@nestjs/cqrs';
 import { InsufficientFundsDomainException } from '../exceptions/insufficient-funds-domain.exception';
 import { IMoneyCalculator } from '../ports/money-calculator';
 import { AccountId } from '../value-objects/account-id.vo';
 import { Money } from '../value-objects/money.vo';
+import { AccountCreditedEvent } from '../events/account-credited.event';
 
-export class Account {
+export class Account extends AggregateRoot {
   private constructor(
     public readonly id: AccountId,
     private balance: Money,
@@ -11,6 +13,7 @@ export class Account {
     public createdAt?: Date,
     public updatedAt?: Date,
   ) {
+    super();
     this.validate();
   }
 
@@ -27,6 +30,7 @@ export class Account {
   credit(amount: Money): void {
     this.balance = this.calculator.add(this.balance, amount);
     this.updatedAt = new Date();
+    this.apply(new AccountCreditedEvent(this.id.value, amount.value));
   }
 
   debit(amount: Money): void {
