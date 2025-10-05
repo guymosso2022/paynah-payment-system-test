@@ -7,7 +7,7 @@ import {
 import { Inject } from '@nestjs/common';
 import { Account } from 'src/domain/entities/account.entity';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
-import { AccountNotFoundException } from 'src/application/exceptions/account-not-found.exception';
+import { AccountNotFoundApplicationException } from 'src/application/exceptions/account-not-found.exception';
 import { Money } from 'src/domain/value-objects/money.vo';
 
 @CommandHandler(DebitAccountCommand)
@@ -23,7 +23,9 @@ export class DebitAccountHandler
       AccountId.create(command.accountId),
     );
     if (!account) {
-      throw new AccountNotFoundException('Account not found'); // ou une exception custom
+      throw new AccountNotFoundApplicationException(
+        `Account ${command.accountId} not found`,
+      ); // ou une exception custom
     }
     account.debit(Money.from(command.amount, command.currency));
     const updatedAccount = await this.accountRepository.save(account);
