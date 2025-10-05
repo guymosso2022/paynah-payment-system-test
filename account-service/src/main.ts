@@ -22,7 +22,6 @@ async function bootstrap() {
       },
     },
   );
-
   await kafkaApp.listen();
   console.log('Kafka microservice is listening...');
 

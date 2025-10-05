@@ -7,12 +7,12 @@ import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    InterfaceModule,
-    InfrastructureModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
     }),
+    InterfaceModule,
+    InfrastructureModule,
   ],
   controllers: [AppController],
   providers: [AppService],

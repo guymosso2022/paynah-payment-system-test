@@ -1,12 +1,15 @@
-import { Inject, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { KafkaPublishFailedException } from 'src/infrastructure/exceptions/kafka-publish-failed.exception';
 import { KafkaTopicNotFoundException } from 'src/infrastructure/exceptions/kafka-topicnot-found.exception';
 import { EventFactory } from 'src/infrastructure/factories/event.factory';
 
+@Injectable()
 export class KafkaProducerService implements OnModuleInit {
-  private readonly topicMapping: Record<string, string> = {};
+  private readonly topicMapping: Record<string, string> = {
+    AccountCreditedIntegrationEvent: 'account-credited-integration-events',
+  };
 
   constructor(
     @Inject('KAFKA_SERVICE')
@@ -16,6 +19,7 @@ export class KafkaProducerService implements OnModuleInit {
   async onModuleInit() {
     console.log('[KafkaEventPublisher] Connecting Kafka client...');
     await this.kafkaClient.connect();
+    console.log('[KafkaEventPublisher] Connecting Kafka client!!!!!');
   }
 
   async publish<T extends object>(event: T): Promise<void> {
