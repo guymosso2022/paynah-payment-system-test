@@ -17,7 +17,7 @@ async function bootstrap() {
           allowAutoTopicCreation: true,
         },
         subscribe: {
-          fromBeginning: true, // ← très important pour lire tous les events déjà publiés
+          fromBeginning: true,
         },
       },
     },
