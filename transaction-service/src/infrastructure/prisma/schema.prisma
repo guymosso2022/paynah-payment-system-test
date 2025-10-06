@@ -6,10 +6,25 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+
+
+model Transaction {
+  id          String   @id @default(uuid()) @db.Uuid
+  amount      Int
+  currency    String   @db.VarChar()
+  type        String   @db.VarChar()
+  status      String   @db.VarChar()
+  accountId   String?  @db.VarChar() @map("account_id")
+  paymentId   String?  @db.VarChar() @map("payment_id")
+  description String?  @db.VarChar()
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt  @map("updated_at")
+  @@map("transaction")
 }
