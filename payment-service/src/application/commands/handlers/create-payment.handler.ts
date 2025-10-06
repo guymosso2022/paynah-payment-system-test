@@ -13,6 +13,8 @@ import { AccountId } from 'src/domain/value-objects/account-id.vo';
 import { Payment } from 'src/domain/entities/payment.entity';
 import { Money } from 'src/domain/value-objects/money.vo';
 import { PaymentId } from 'src/domain/value-objects/payment-id.vo';
+import { PaymentEventPublisherService } from 'src/application/services/payment-event-publisher.service';
+import { PaymentCreatedEvent } from 'src/domain/events/payment-created.event';
 
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentHandler
@@ -23,6 +25,7 @@ export class CreatePaymentHandler
     private readonly paymentRepository: IPaymentRepositoryPort,
     @Inject(IUNIQUE_ID_GENERATOR_PORT)
     private readonly idGenerator: IUniqueIdGeneratorPort,
+    private readonly paymentEventPublisherService: PaymentEventPublisherService,
   ) {}
   async execute(command: CreatePaymentCommand): Promise<Payment> {
     const id = this.idGenerator.generate();
@@ -33,6 +36,10 @@ export class CreatePaymentHandler
       sourceAccountIdVO,
       targetAccountIdVO,
       Money.from(command.amount, command.currency),
+    );
+    await this.paymentEventPublisherService.publishDomainEvents(
+      payment,
+      PaymentCreatedEvent,
     );
     const paymentPersisted = await this.paymentRepository.save(payment);
     return paymentPersisted;

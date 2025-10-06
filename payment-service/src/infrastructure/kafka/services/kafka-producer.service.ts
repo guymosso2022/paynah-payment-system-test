@@ -1,0 +1,56 @@
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { firstValueFrom } from 'rxjs';
+import { ClientKafka } from '@nestjs/microservices';
+import { KafkaTopicNotFoundException } from 'src/domain/exceptions/kafka-topic-not-found.exception';
+import { KafkaPublishFailedException } from 'src/domain/exceptions/kafka-publish-failed-exception';
+import { EventFactory } from 'src/infrastructure/factories/event.factory';
+
+@Injectable()
+export class KafkaEventPublisher implements OnModuleInit {
+  private readonly topicMapping: Record<string, string> = {
+    PaymentCreatedIntegrationEvent: 'payment-create-integration-events',
+  };
+
+  constructor(
+    @Inject('KAFKA_SERVICE')
+    private readonly kafkaClient: ClientKafka,
+    private readonly eventFactory: EventFactory,
+  ) {}
+
+  async onModuleInit() {
+    console.log('[KafkaEventPublisher] Connecting Kafka client...');
+    await this.kafkaClient.connect();
+  }
+
+  async publish<T extends object>(event: T): Promise<void> {
+    const infraEvent = this.eventFactory.toInfrastructureEvent(event);
+
+    const topic = this.topicMapping[infraEvent.constructor.name];
+    if (!topic) {
+      console.error(
+        `[KafkaEventPublisher] No topic mapped for event: ${event.constructor.name}`,
+      );
+      throw new KafkaTopicNotFoundException(event.constructor.name);
+    }
+
+    try {
+      await firstValueFrom(
+        this.kafkaClient.emit(topic, {
+          type: event.constructor.name,
+          payload: infraEvent,
+        }),
+      );
+
+      console.log(
+        `[KafkaEventPublisher] Event successfully published to topic "${topic}"`,
+        infraEvent,
+      );
+    } catch (error) {
+      console.error(
+        `[KafkaEventPublisher] Failed to publish event to topic "${topic}"`,
+        error,
+      );
+      throw new KafkaPublishFailedException(topic, error);
+    }
+  }
+}

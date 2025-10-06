@@ -5,6 +5,7 @@ import { Money } from '../value-objects/money.vo';
 import { InvalidAmountException } from '../exceptions/invalid-amount.exception';
 import { SameAccountException } from '../exceptions/same-account.exception';
 import { PaymentId } from '../value-objects/payment-id.vo';
+import { PaymentCreatedEvent } from '../events/payment-created.event';
 
 export class Payment extends AggregateRoot {
   private constructor(
@@ -40,6 +41,15 @@ export class Payment extends AggregateRoot {
       targetAccountId,
       amount,
       'PENDING' as PaymentStatus,
+    );
+    payment.apply(
+      new PaymentCreatedEvent(
+        id,
+        sourceAccountId,
+        targetAccountId,
+        amount.value,
+        amount.currency,
+      ),
     );
     return payment;
   }
