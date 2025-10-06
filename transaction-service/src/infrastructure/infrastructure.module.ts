@@ -1,16 +1,13 @@
 import { Module } from '@nestjs/common';
-// import { KafkaModule } from './kafka/kafka.module';
 import { ITRANSACTION_REPOSITORY_PORT } from 'src/domain/ports/transaction.port';
 import { PrismaTransactionRepository } from './repositories/prisma-transaction.repository';
 import { PrismaModule } from './prisma/prisma.module';
 import { IEVENT_SUBSCRIBER_PORT } from 'src/domain/ports/event-suscriber.port';
-// import { EventSubscriberService } from 'src/infrastructure/services/event-subscriber.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { KafkaModule } from './kafka/kafka.module';
 import { IUNIQUE_ID_GENERATOR_PORT } from 'src/domain/ports/unique-id-generator-port';
 import { UuidV4Generator } from './uuid/uuid-v4-generator.service';
 import { EventSubscriberService } from 'src/application/services/event-subscriber.service';
-import { ApplicationModule } from 'src/application/application.module';
 
 @Module({
   imports: [PrismaModule, KafkaModule, CqrsModule],

@@ -12,19 +12,6 @@ export class Transaction {
   getUpdatedAt() {
     throw new Error('Method not implemented.');
   }
-  static reconstitute(arg0: {
-    id: any;
-    amount: Money;
-    type: TransactionType;
-    status: TransactionStatus;
-    accountId: any;
-    paymentId: any;
-    description: any;
-    createdAt: any;
-    updatedAt: any;
-  }): Transaction | PromiseLike<Transaction> {
-    throw new Error('Method not implemented.');
-  }
   private constructor(
     public readonly id: TransactionId,
     private type: TransactionType,
@@ -62,10 +49,6 @@ export class Transaction {
     return this.amount;
   }
 
-  // getCurrency(): string {
-  //   return this.currency;
-  // }
-
   getId(): TransactionId {
     return this.id;
   }
@@ -88,17 +71,5 @@ export class Transaction {
 
   getDescription(): string | undefined {
     return this.description;
-  }
-
-  toJSON() {
-    return {
-      id: this.id.value,
-      type: this.type,
-      status: this.status,
-      accountId: this.accountId,
-      paymentId: this.paymentId,
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-    };
   }
 }

@@ -6,6 +6,8 @@ import { ITransactionRepositoryPort } from 'src/domain/ports/transaction.port';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
 import { Money } from 'src/domain/value-objects/money.vo';
 import { PrismaService } from '../prisma/prisma.service';
+import { TransactionId } from 'src/domain/value-objects/transaction-id.vo';
+import { PaymentId } from 'src/domain/value-objects/payment-id.vo';
 
 @Injectable()
 export class PrismaTransactionRepository implements ITransactionRepositoryPort {
@@ -38,7 +40,66 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
     });
     return transaction;
   }
-  findById(accountId: AccountId): Promise<Transaction[]> {
-    throw new Error('Method not implemented.');
+
+  async findById(
+    accountId: AccountId,
+    page = 1,
+    limit = 20,
+  ): Promise<{
+    data: {
+      id: string;
+      amount: number;
+      currency: string;
+      type: string;
+      status: string;
+      accountId: string | null;
+      paymentId: string | null;
+      description: string | null;
+      createdAt: Date | null;
+      updatedAt: Date | null;
+    }[];
+    meta: {
+      firstPage: number;
+      total: number;
+      lastPage: number;
+      currentPage: number;
+      itemsPerPage: number;
+    };
+  }> {
+    if (!accountId) {
+      throw new Error('AccountId is required');
+    }
+
+    const safePage = page && page > 0 ? page : 1;
+    const safeLimit = limit && limit > 0 ? limit : 20;
+    const skip = (safePage - 1) * safeLimit;
+
+    const [records, total] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where: { accountId: accountId.getValue() },
+        skip,
+        take: safeLimit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.transaction.count({
+        where: { accountId: accountId.getValue() },
+      }),
+    ]);
+
+    const meta = {
+      firstPage: 1,
+      total: total,
+      lastPage: Math.ceil(total / safeLimit),
+      currentPage: safePage,
+      itemsPerPage: safeLimit,
+    };
+
+    const transactions = records.map((record) => ({
+      ...record,
+      createdAt: record.createdAt ? new Date(record.createdAt) : null,
+      updatedAt: record.updatedAt ? new Date(record.updatedAt) : null,
+    }));
+
+    return { data: transactions, meta };
   }
 }
