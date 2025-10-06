@@ -1,4 +1,7 @@
 export class Money {
+  getValue() {
+    throw new Error('Method not implemented.');
+  }
   private constructor(
     private readonly _amount: number,
     private readonly _currency: string,

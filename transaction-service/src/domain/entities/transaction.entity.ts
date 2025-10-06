@@ -1,16 +1,35 @@
 import { TransactionType } from '../enums/transaction-type.enum';
 import { TransactionStatus } from '../enums/transaction.enum-status';
 import { AccountId } from '../value-objects/account-id.vo';
+import { Money } from '../value-objects/money.vo';
 import { PaymentId } from '../value-objects/payment-id.vo';
 import { TransactionId } from '../value-objects/transaction-id.vo';
 
 export class Transaction {
+  getCreatedAt() {
+    throw new Error('Method not implemented.');
+  }
+  getUpdatedAt() {
+    throw new Error('Method not implemented.');
+  }
+  static reconstitute(arg0: {
+    id: any;
+    amount: Money;
+    type: TransactionType;
+    status: TransactionStatus;
+    accountId: any;
+    paymentId: any;
+    description: any;
+    createdAt: any;
+    updatedAt: any;
+  }): Transaction | PromiseLike<Transaction> {
+    throw new Error('Method not implemented.');
+  }
   private constructor(
     public readonly id: TransactionId,
     private type: TransactionType,
     private status: TransactionStatus,
-    private amount: number,
-    private currency: string,
+    private amount: Money,
     private accountId?: AccountId,
     private paymentId?: PaymentId,
     private description?: string,
@@ -22,8 +41,7 @@ export class Transaction {
     id: TransactionId,
     type: TransactionType,
     status: TransactionStatus,
-    amount: number,
-    currency: string,
+    amount: Money,
     accountId?: AccountId,
     paymentId?: PaymentId,
     description?: string,
@@ -33,7 +51,6 @@ export class Transaction {
       type,
       status,
       amount,
-      currency,
       accountId,
       paymentId,
       description,
@@ -41,13 +58,13 @@ export class Transaction {
       new Date(),
     );
   }
-  getAmount(): number {
+  getAmount(): Money {
     return this.amount;
   }
 
-  getCurrency(): string {
-    return this.currency;
-  }
+  // getCurrency(): string {
+  //   return this.currency;
+  // }
 
   getId(): TransactionId {
     return this.id;
@@ -78,8 +95,6 @@ export class Transaction {
       id: this.id.value,
       type: this.type,
       status: this.status,
-      amount: this.amount,
-      currency: this.currency,
       accountId: this.accountId,
       paymentId: this.paymentId,
       createdAt: this.createdAt,
