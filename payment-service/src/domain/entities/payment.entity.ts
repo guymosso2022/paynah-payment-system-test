@@ -4,10 +4,11 @@ import { AccountId } from '../value-objects/account-id.vo';
 import { Money } from '../value-objects/money.vo';
 import { InvalidAmountException } from '../exceptions/invalid-amount.exception';
 import { SameAccountException } from '../exceptions/same-account.exception';
+import { PaymentId } from '../value-objects/payment-id.vo';
 
 export class Payment extends AggregateRoot {
   private constructor(
-    private readonly id: string,
+    private readonly id: PaymentId,
     private readonly sourceAccountId: AccountId,
     private readonly targetAccountId: AccountId,
     private readonly amount: Money,
@@ -19,7 +20,7 @@ export class Payment extends AggregateRoot {
   }
 
   static create(
-    id: string,
+    id: PaymentId,
     sourceAccountId: AccountId,
     targetAccountId: AccountId,
     amount: Money,
@@ -44,7 +45,7 @@ export class Payment extends AggregateRoot {
   }
 
   static reconstitute(props: {
-    id: string;
+    id: PaymentId;
     sourceAccountId: AccountId;
     targetAccountId: AccountId;
     amount: Money;
@@ -63,7 +64,7 @@ export class Payment extends AggregateRoot {
     );
   }
 
-  getId(): string {
+  getId(): PaymentId {
     return this.id;
   }
 
