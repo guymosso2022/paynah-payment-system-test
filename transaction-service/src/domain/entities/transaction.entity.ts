@@ -6,12 +6,6 @@ import { PaymentId } from '../value-objects/payment-id.vo';
 import { TransactionId } from '../value-objects/transaction-id.vo';
 
 export class Transaction {
-  getCreatedAt() {
-    throw new Error('Method not implemented.');
-  }
-  getUpdatedAt() {
-    throw new Error('Method not implemented.');
-  }
   private constructor(
     public readonly id: TransactionId,
     private type: TransactionType,

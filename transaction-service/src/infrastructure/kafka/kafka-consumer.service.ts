@@ -1,5 +1,4 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { Kafka } from 'kafkajs';
 import {
   IEVENT_SUBSCRIBER_PORT,
