@@ -13,6 +13,7 @@ export class Transaction {
     private currency: string,
     private accountId?: AccountId,
     private paymentId?: PaymentId,
+    private description?: string,
     public createdAt?: Date,
     public updatedAt?: Date,
   ) {}
@@ -25,6 +26,7 @@ export class Transaction {
     currency: string,
     accountId?: AccountId,
     paymentId?: PaymentId,
+    description?: string,
   ): Transaction {
     return new Transaction(
       id,
@@ -34,6 +36,7 @@ export class Transaction {
       currency,
       accountId,
       paymentId,
+      description,
       new Date(),
       new Date(),
     );
@@ -64,6 +67,10 @@ export class Transaction {
 
   getStatus(): TransactionStatus {
     return this.status;
+  }
+
+  getDescription(): string | undefined {
+    return this.description;
   }
 
   toJSON() {
