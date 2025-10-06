@@ -1,6 +1,10 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { CommandBus, EventBus } from '@nestjs/cqrs';
 import { Kafka } from 'kafkajs';
+import {
+  IEVENT_SUBSCRIBER_PORT,
+  IEventSubscriberPort,
+} from 'src/domain/ports/event-suscriber.port';
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit {
@@ -10,8 +14,8 @@ export class KafkaConsumerService implements OnModuleInit {
   });
 
   constructor(
-    private readonly commandBus: CommandBus,
-    private readonly eventBus: EventBus,
+    @Inject(IEVENT_SUBSCRIBER_PORT)
+    private readonly subscriber: IEventSubscriberPort,
   ) {}
 
   private async initConsumer(
@@ -44,16 +48,27 @@ export class KafkaConsumerService implements OnModuleInit {
       'transaction-debit-group',
       'account-debited-integration-events',
       async (parsed) => {
-        console.log('[account-debited-integration-events]', parsed);
+        const payload = JSON.parse(parsed.value.toString());
+        console.log('[account-debited-integration-events]', payload);
+        await await this.subscriber.consumeAccountCredited(
+          parsed.payload.accountId,
+          parsed.payload.amount,
+          parsed.payload.type,
+          parsed.payload.status,
+        );
       },
     );
-
-    // Consumer transfert échoué
     await this.initConsumer(
       'transaction-credit-group',
       'account-credited-integration-events',
       async (parsed) => {
         console.log('[account-credited-integration-events]', parsed);
+        await await this.subscriber.consumeAccountCredited(
+          parsed.payload.accountId,
+          parsed.payload.amount,
+          parsed.payload.type,
+          parsed.payload.status,
+        );
       },
     );
   }
