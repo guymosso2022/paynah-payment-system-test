@@ -15,8 +15,6 @@ export class EventSubscriberService implements IEventSubscriberPort {
     type: string,
     status: TransactionStatus,
   ): Promise<void> {
-    console.log('accountId!!!!!', accountId, amount, type);
-    // Créer une transaction de type CREDIT via le CommandBus
     await this.commandBus.execute(
       new CreateTransactionCommand(
         type as TransactionType,
@@ -33,7 +31,6 @@ export class EventSubscriberService implements IEventSubscriberPort {
     type: TransactionType,
     status: TransactionStatus,
   ): Promise<void> {
-    // Créer une transaction de type DEBIT via le CommandBus
     await this.commandBus.execute(
       new CreateTransactionCommand(
         type as TransactionType,

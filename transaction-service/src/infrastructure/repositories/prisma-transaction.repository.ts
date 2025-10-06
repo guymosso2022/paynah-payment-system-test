@@ -1,13 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Transaction } from 'src/domain/entities/transaction.entity';
-import { TransactionType } from 'src/domain/enums/transaction-type.enum';
-import { TransactionStatus } from 'src/domain/enums/transaction.enum-status';
 import { ITransactionRepositoryPort } from 'src/domain/ports/transaction.port';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
-import { Money } from 'src/domain/value-objects/money.vo';
 import { PrismaService } from '../prisma/prisma.service';
-import { TransactionId } from 'src/domain/value-objects/transaction-id.vo';
-import { PaymentId } from 'src/domain/value-objects/payment-id.vo';
 
 @Injectable()
 export class PrismaTransactionRepository implements ITransactionRepositoryPort {

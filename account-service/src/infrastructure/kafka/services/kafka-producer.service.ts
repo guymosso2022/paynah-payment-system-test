@@ -20,7 +20,6 @@ export class KafkaProducerService implements OnModuleInit {
   async onModuleInit() {
     console.log('[KafkaEventPublisher] Connecting Kafka client...');
     await this.kafkaClient.connect();
-    console.log('[KafkaEventPublisher] Connecting Kafka client!!!!!');
   }
 
   async publish<T extends object>(event: T): Promise<void> {
