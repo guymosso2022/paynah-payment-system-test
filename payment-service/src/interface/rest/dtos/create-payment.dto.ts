@@ -1,16 +1,20 @@
-import { IsString, IsNumber, Min } from 'class-validator';
+import { IsString, IsNumber, Min, IsNotEmpty } from 'class-validator';
 
 export class CreatePaymentDto {
-  @IsString()
+  @IsNotEmpty({ message: 'Source account ID should not be empty' })
+  @IsString({ message: 'Source account ID must be a string' })
   sourceAccountId: string;
 
-  @IsString()
+  @IsNotEmpty({ message: 'Target account ID should not be empty' })
+  @IsString({ message: 'Target account ID must be a string' })
   targetAccountId: string;
 
-  @IsNumber()
-  @Min(0.01)
+  @IsNotEmpty({ message: 'Amount should not be empty' })
+  @IsNumber({}, { message: 'Amount must be a number' })
+  @Min(0.01, { message: 'Amount must be at least 0.01' })
   amount: number;
 
-  @IsString()
+  @IsNotEmpty({ message: 'Currency should not be empty' })
+  @IsString({ message: 'Currency must be a string' })
   currency: string;
 }
