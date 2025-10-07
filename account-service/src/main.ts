@@ -10,8 +10,8 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: (process.env.KAFKA_BROKERS ?? 'localhost:9092').split(','),
-          clientId: process.env.KAFKA_CLIENT_ID ?? 'account-service',
+          brokers: (process.env.KAFKA_BROKERS || 'localhost:9092').split(','),
+          clientId: process.env.KAFKA_CLIENT_ID || 'account-service',
         },
         consumer: {
           groupId:
