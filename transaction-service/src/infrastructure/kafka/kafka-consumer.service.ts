@@ -1,5 +1,5 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import { Kafka } from 'kafkajs';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Consumer, Kafka } from 'kafkajs';
 import {
   IEVENT_SUBSCRIBER_PORT,
   IEventSubscriberPort,
@@ -7,15 +7,19 @@ import {
 
 @Injectable()
 export class KafkaConsumerService implements OnModuleInit {
-  private kafka = new Kafka({
-    clientId: 'transaction-service',
-    brokers: ['localhost:9092'],
-  });
+  private readonly logger = new Logger(KafkaConsumerService.name);
+
+  private kafka: Kafka;
 
   constructor(
     @Inject(IEVENT_SUBSCRIBER_PORT)
     private readonly subscriber: IEventSubscriberPort,
-  ) {}
+  ) {
+    this.kafka = new Kafka({
+      clientId: process.env.KAFKA_CLIENT_ID ?? 'transaction-service',
+      brokers: (process.env.KAFKA_BROKERS ?? 'localhost:9092').split(','),
+    });
+  }
 
   async onModuleInit() {
     await this.startConsumer('transaction-debit-group', [
@@ -29,7 +33,7 @@ export class KafkaConsumerService implements OnModuleInit {
   }
 
   private async startConsumer(groupId: string, topics: string[]) {
-    const consumer = this.kafka.consumer({
+    const consumer: Consumer = this.kafka.consumer({
       groupId,
       sessionTimeout: 30000,
       heartbeatInterval: 3000,
@@ -37,53 +41,63 @@ export class KafkaConsumerService implements OnModuleInit {
     });
 
     await consumer.connect();
+    this.logger.log(`Kafka consumer connected for group ${groupId}`);
 
     for (const topic of topics) {
       await consumer.subscribe({ topic, fromBeginning: true });
+      this.logger.log(`Subscribed to topic ${topic}`);
     }
 
     await consumer.run({
       eachMessage: async ({ topic, message }) => {
         if (!message.value) return;
-        const parsed = JSON.parse(message.value.toString());
 
         try {
-          switch (topic) {
-            case 'account-debited-integration-events':
-              console.log(`[${topic}]`, parsed);
-              await this.subscriber.consumeAccountCredited(
-                parsed.payload.accountId,
-                parsed.payload.amount,
-                parsed.payload.type,
-                parsed.payload.status,
-              );
-              break;
-
-            case 'account-credited-integration-events':
-              console.log(`[${topic}]`, parsed);
-              await this.subscriber.consumeAccountCredited(
-                parsed.payload.accountId,
-                parsed.payload.amount,
-                parsed.payload.type,
-                parsed.payload.status,
-              );
-              break;
-
-            case 'payment-account-created-integration-events':
-              console.log(`[${topic}]`, parsed);
-              await this.subscriber.consumeAccountPayment(
-                parsed.payload.sourceAccountId,
-                parsed.payload.amount,
-                parsed.payload.currency,
-                parsed.payload.status,
-                parsed.payload.paymentId,
-              );
-              break;
-          }
+          const parsed = JSON.parse(message.value.toString());
+          await this.handleMessage(topic, parsed);
         } catch (err) {
-          console.error(`Erreur traitement ${topic}`, err);
+          this.logger.error(
+            `Error while parsing message from topic ${topic}`,
+            err.stack,
+          );
         }
       },
     });
+  }
+
+  private async handleMessage(topic: string, parsed: any) {
+    try {
+      switch (topic) {
+        case 'account-debited-integration-events':
+        case 'account-credited-integration-events':
+          this.logger.log(`[${topic}] message reçu: ${JSON.stringify(parsed)}`);
+          await this.subscriber.consumeAccountCredited(
+            parsed.payload.accountId,
+            parsed.payload.amount,
+            parsed.payload.type,
+            parsed.payload.status,
+          );
+          break;
+
+        case 'payment-account-created-integration-events':
+          this.logger.log(`[${topic}] message reçu: ${JSON.stringify(parsed)}`);
+          await this.subscriber.consumeAccountPayment(
+            parsed.payload.sourceAccountId,
+            parsed.payload.amount,
+            parsed.payload.currency,
+            parsed.payload.status,
+            parsed.payload.paymentId,
+          );
+          break;
+
+        default:
+          this.logger.warn(`Topic non géré: ${topic}`);
+      }
+    } catch (err) {
+      this.logger.error(
+        `Erreur traitement message du topic ${topic}`,
+        err.stack,
+      );
+    }
   }
 }
