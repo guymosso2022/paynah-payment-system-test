@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './infrastructure/filters/all-exception.filter';
 
 async function bootstrap() {
   const kafkaBrokers = process.env.KAFKA_BROKERS?.split(',') || [
@@ -33,6 +34,7 @@ async function bootstrap() {
   console.log('Kafka microservice is listening...');
 
   const httpApp = await NestFactory.create(AppModule);
+  httpApp.useGlobalFilters(new AllExceptionsFilter());
   const config = new DocumentBuilder()
     .setTitle('Payments API')
     .setDescription('API for payments')
