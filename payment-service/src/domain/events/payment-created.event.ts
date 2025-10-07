@@ -1,6 +1,3 @@
-import { AccountId } from '../value-objects/account-id.vo';
-import { PaymentId } from '../value-objects/payment-id.vo';
-
 export class PaymentCreatedEvent {
   constructor(
     public readonly paymentId: string,

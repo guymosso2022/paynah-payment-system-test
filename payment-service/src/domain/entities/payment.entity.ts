@@ -98,38 +98,6 @@ export class Payment extends AggregateRoot {
     return this.updatedAt;
   }
 
-  // updateStatus(newStatus: PaymentStatus): void {
-  //   const validStatuses = Object.values(PaymentStatus);
-
-  //   if (!validStatuses.includes(newStatus)) {
-  //     throw new Error(`Invalid payment status: ${newStatus}`);
-  //   }
-
-  //   this.status = newStatus;
-  // }
-
-  // updateStatus(newStatus: PaymentStatus): void {
-  //   // Définir les statuts valides
-  //   const validStatuses = Object.values(PaymentStatus);
-  //   if (!validStatuses.includes(newStatus)) {
-  //     throw new Error(`Invalid payment status: ${newStatus}`);
-  //   }
-
-  //   switch (newStatus) {
-  //     case 'TRANSFER_COMPLETED':
-  //       this.status = 'SUCCESS' as PaymentStatus;
-  //       break;
-  //     case 'ACCOUNT_NOT_FOUND':
-  //     case 'DEST_ACCOUNT_NOT_FOUND':
-  //     case 'INSUFFICIENT_FUNDS':
-  //       this.status = 'FAILED' as PaymentStatus;
-  //       break;
-  //     default:
-  //       this.status = newStatus; // si tu veux garder d'autres statuts tels quels
-  //       break;
-  //   }
-  // }
-
   updateStatus(newStatus: InternalPaymentStatus): void {
     const mapping: Record<InternalPaymentStatus, PaymentStatus> = {
       TRANSFER_COMPLETED: PaymentStatus.SUCCESS,

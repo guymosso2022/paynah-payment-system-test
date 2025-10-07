@@ -12,7 +12,7 @@ export class PrismaPaymentRepository implements IPaymentRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(payment: Payment): Promise<Payment> {
-    const record = await this.prisma.payment.upsert({
+    await this.prisma.payment.upsert({
       where: { id: payment.getId().value },
       update: {
         status: payment.getStatus(),
@@ -30,21 +30,8 @@ export class PrismaPaymentRepository implements IPaymentRepositoryPort {
       },
     });
 
-    // return Payment.reconstitute({
-    //   id: payment.getId(),
-    //   sourceAccountId: AccountId.create(record.sourceAccountId),
-    //   targetAccountId: AccountId.create(record.targetAccountId),
-    //   amount: Money.from(record.amount),
-    //   status: record.status as PaymentStatus,
-    //   createdAt: record.createdAt ?? new Date(),
-    //   updatedAt: record.updatedAt ?? new Date(),
-    // });
     return payment;
   }
-
-  // findOne(id: PaymentId): Promise<Payment | null> {
-  //   throw new Error('Method not implemented.');
-  // }
 
   async findOne(paymentId: PaymentId): Promise<Payment | null> {
     const record = await this.prisma.payment.findUnique({
