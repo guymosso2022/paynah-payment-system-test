@@ -4,17 +4,22 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
+  const kafkaBrokers = process.env.KAFKA_BROKERS?.split(',') || [
+    'localhost:9092',
+  ];
+  const kafkaClientId = process.env.KAFKA_CLIENT_ID || 'payment-service';
+  const kafkaGroupId = process.env.KAFKA_GROUP_ID || 'payment-consumer-group';
   const kafkaApp = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: ['localhost:9092'],
-          clientId: 'payment-service',
+          brokers: kafkaBrokers,
+          clientId: kafkaClientId,
         },
         consumer: {
-          groupId: 'payment-consumer-group',
+          groupId: kafkaGroupId,
           allowAutoTopicCreation: true,
         },
         subscribe: {
