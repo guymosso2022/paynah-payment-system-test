@@ -44,7 +44,7 @@ export class DebitAccountHandler
 
     const successEvent = new AccountDebitedEvent(
       account.getId().value,
-      account.getBalance().value,
+      command.amount,
       'DEBIT',
       'SUCCESS',
     );
