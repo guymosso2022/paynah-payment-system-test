@@ -2,12 +2,19 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { CreatePaymentCommand } from 'src/application/commands/create-payment.command';
 import { CreatePaymentDto } from '../dtos/create-payment.dto';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('Payments Endpoint')
 @Controller('payments')
 export class PaymentController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create a payment' })
+  @ApiResponse({
+    status: 201,
+    description: 'Payment successfully created',
+  })
   async create(
     @Body()
     createPaymentDtoDto: CreatePaymentDto,
