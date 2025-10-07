@@ -10,11 +10,12 @@ async function bootstrap() {
       transport: Transport.KAFKA,
       options: {
         client: {
-          brokers: ['localhost:9092'],
-          clientId: 'account-service',
+          brokers: (process.env.KAFKA_BROKERS ?? 'localhost:9092').split(','),
+          clientId: process.env.KAFKA_CLIENT_ID ?? 'account-service',
         },
         consumer: {
-          groupId: 'accounts-consumer-group',
+          groupId:
+            process.env.KAFKA_CONSUMER_GROUP ?? 'accounts-consumer-group',
           allowAutoTopicCreation: true,
         },
         subscribe: {
