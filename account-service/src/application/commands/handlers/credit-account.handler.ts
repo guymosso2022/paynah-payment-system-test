@@ -45,7 +45,7 @@ export class CreditAccountHandler
 
     const successEvent = new AccountCreditedEvent(
       account.getId().value,
-      account.getBalance().value,
+      command.amount,
       'CREDIT',
       'SUCCESS',
     );
