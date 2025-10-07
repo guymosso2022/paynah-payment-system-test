@@ -15,6 +15,10 @@ import { Money } from 'src/domain/value-objects/money.vo';
 import { PaymentId } from 'src/domain/value-objects/payment-id.vo';
 import { PaymentEventPublisherService } from 'src/application/services/payment-event-publisher.service';
 import { PaymentCreatedEvent } from 'src/domain/events/payment-created.event';
+import {
+  IEVENT_PUBLISHER_PORT,
+  IEventPublisherPort,
+} from 'src/domain/ports/event-publisher.port';
 
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentHandler
@@ -25,7 +29,8 @@ export class CreatePaymentHandler
     private readonly paymentRepository: IPaymentRepositoryPort,
     @Inject(IUNIQUE_ID_GENERATOR_PORT)
     private readonly idGenerator: IUniqueIdGeneratorPort,
-    private readonly paymentEventPublisherService: PaymentEventPublisherService,
+    @Inject(IEVENT_PUBLISHER_PORT)
+    private readonly eventPublisher: IEventPublisherPort,
   ) {}
   async execute(command: CreatePaymentCommand): Promise<Payment> {
     const id = this.idGenerator.generate();
@@ -37,11 +42,15 @@ export class CreatePaymentHandler
       targetAccountIdVO,
       Money.from(command.amount, command.currency),
     );
-    await this.paymentEventPublisherService.publishDomainEvents(
-      payment,
-      PaymentCreatedEvent,
+
+    const paymentCreatedEvent = new PaymentCreatedEvent(
+      payment.getId().value,
+      payment.getSourceAccountId().getValue(),
+      payment.getTargetAccountId().getValue(),
+      payment.getAmount().value,
+      payment.getAmount().currency,
     );
-    const paymentPersisted = await this.paymentRepository.save(payment);
-    return paymentPersisted;
+    await this.eventPublisher.publish(paymentCreatedEvent);
+    return await this.paymentRepository.save(payment);
   }
 }

@@ -42,15 +42,6 @@ export class Payment extends AggregateRoot {
       amount,
       'PENDING' as PaymentStatus,
     );
-    payment.apply(
-      new PaymentCreatedEvent(
-        id,
-        sourceAccountId,
-        targetAccountId,
-        amount.value,
-        amount.currency,
-      ),
-    );
     return payment;
   }
 
