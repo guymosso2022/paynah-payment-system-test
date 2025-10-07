@@ -8,7 +8,9 @@ import { CreditAccountDto } from '../dtos/credit-account.dto';
 import { DebitAccountCommand } from 'src/application/commands/debit-account.command';
 import { DebitAccountDto } from '../dtos/debit-accont.dto';
 import { GetAccountBalanceQuery } from 'src/application/queries/get-account-balance.query';
+import { ApiTags, ApiOperation, ApiProperty } from '@nestjs/swagger';
 
+@ApiTags('Accounts')
 @Controller('accounts')
 export class AccountController {
   constructor(
@@ -16,6 +18,7 @@ export class AccountController {
     private readonly queryBus: QueryBus,
   ) {}
 
+  @ApiOperation({ summary: 'Create a new account' })
   @Post()
   async create(
     @Body()
@@ -28,6 +31,7 @@ export class AccountController {
     return this.commandBus.execute(command);
   }
 
+  @ApiOperation({ summary: 'Credit an account' })
   @Post('credits')
   async createAccountCredit(@Body() creditAccountDto: CreditAccountDto) {
     const command = new CreditAccountCommand(
@@ -38,6 +42,7 @@ export class AccountController {
     return this.commandBus.execute(command);
   }
 
+  @ApiOperation({ summary: 'Debit an account' })
   @Post('debits')
   async createAccountDebit(@Body() debitAccountDto: DebitAccountDto) {
     const command = new DebitAccountCommand(
@@ -48,6 +53,7 @@ export class AccountController {
     return this.commandBus.execute(command);
   }
 
+  @ApiOperation({ summary: 'Get account balance by ID' })
   @Get(':id/balances')
   async getBalance(@Param('id') id: string) {
     return this.queryBus.execute(new GetAccountBalanceQuery(id));
