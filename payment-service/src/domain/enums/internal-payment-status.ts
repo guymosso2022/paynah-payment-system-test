@@ -1,0 +1,5 @@
+export type InternalPaymentStatus =
+  | 'TRANSFER_COMPLETED'
+  | 'ACCOUNT_NOT_FOUND'
+  | 'DEST_ACCOUNT_NOT_FOUND'
+  | 'INSUFFICIENT_FUNDS';

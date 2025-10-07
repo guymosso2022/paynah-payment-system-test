@@ -6,6 +6,7 @@ import { InvalidAmountException } from '../exceptions/invalid-amount.exception';
 import { SameAccountException } from '../exceptions/same-account.exception';
 import { PaymentId } from '../value-objects/payment-id.vo';
 import { PaymentCreatedEvent } from '../events/payment-created.event';
+import { InternalPaymentStatus } from '../enums/internal-payment-status';
 
 export class Payment extends AggregateRoot {
   private constructor(
@@ -95,5 +96,48 @@ export class Payment extends AggregateRoot {
 
   getUpdatedAt(): Date {
     return this.updatedAt;
+  }
+
+  // updateStatus(newStatus: PaymentStatus): void {
+  //   const validStatuses = Object.values(PaymentStatus);
+
+  //   if (!validStatuses.includes(newStatus)) {
+  //     throw new Error(`Invalid payment status: ${newStatus}`);
+  //   }
+
+  //   this.status = newStatus;
+  // }
+
+  // updateStatus(newStatus: PaymentStatus): void {
+  //   // Définir les statuts valides
+  //   const validStatuses = Object.values(PaymentStatus);
+  //   if (!validStatuses.includes(newStatus)) {
+  //     throw new Error(`Invalid payment status: ${newStatus}`);
+  //   }
+
+  //   switch (newStatus) {
+  //     case 'TRANSFER_COMPLETED':
+  //       this.status = 'SUCCESS' as PaymentStatus;
+  //       break;
+  //     case 'ACCOUNT_NOT_FOUND':
+  //     case 'DEST_ACCOUNT_NOT_FOUND':
+  //     case 'INSUFFICIENT_FUNDS':
+  //       this.status = 'FAILED' as PaymentStatus;
+  //       break;
+  //     default:
+  //       this.status = newStatus; // si tu veux garder d'autres statuts tels quels
+  //       break;
+  //   }
+  // }
+
+  updateStatus(newStatus: InternalPaymentStatus): void {
+    const mapping: Record<InternalPaymentStatus, PaymentStatus> = {
+      TRANSFER_COMPLETED: PaymentStatus.SUCCESS,
+      ACCOUNT_NOT_FOUND: PaymentStatus.FAILED,
+      DEST_ACCOUNT_NOT_FOUND: PaymentStatus.FAILED,
+      INSUFFICIENT_FUNDS: PaymentStatus.FAILED,
+    };
+
+    this.status = mapping[newStatus];
   }
 }
