@@ -67,17 +67,26 @@ NODE_ENV=development
 
 3. Lancer Kafka via Docker
 
-docker-compose up -d
+docker-compose up 
 
 
-Installer les dépendances
+4. Installer les dépendances
 
 cd account-service && npm install
 cd ../payment-service && npm install
 cd ../transaction-service && npm install
 
+5. Generer les migrations
 
-5. Lancer les services
+npm run db:generate:migration
+
+si vous vous faire une creation et une migration
+
+npm run db:create:migration
+npm run db:generate:migration
+
+
+6. Lancer les services
 
 # Account Service
 cd account-service
@@ -96,7 +105,7 @@ Chaque microservice se connecte à Kafka pour écouter/produire les événements
 
 Tests
 
-Exécuter les tests unitaires :
+7. Exécuter les tests unitaires :
 
 # Payment Service
 cd payment-service
@@ -111,12 +120,12 @@ cd account-service
 npm run test
 
 
-6. Swagger / API Documentation
+8. Swagger / API Documentation
 
   http://localhost:<PORT>/api/docs
 
 
-7. Justification des choix techniques
+9. Justification des choix techniques
 
    Account Service / Payment Service  / Transaction Service
    
