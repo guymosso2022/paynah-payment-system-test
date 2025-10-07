@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './infrastructure/filters/all-exception.filter';
 
 async function bootstrap() {
   const kafkaApp = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -28,7 +29,7 @@ async function bootstrap() {
   console.log('Kafka microservice is listening...');
 
   const httpApp = await NestFactory.create(AppModule);
-
+  httpApp.useGlobalFilters(new AllExceptionsFilter());
   const config = new DocumentBuilder()
     .setTitle('Accounts Service API')
     .setDescription('API for managing accounts, credits, and debits')
