@@ -5,7 +5,7 @@ import { InfrastructureModule } from 'src/infrastructure/insfrastructure.module'
 import { CreditAccountHandler } from './commands/handlers/credit-account.handler';
 import { DebitAccountHandler } from './commands/handlers/debit-account.hanlder';
 import { GetAccountBalanceHandler } from './queries/handlers/get-account-balance.handler';
-import { AccountEventPublisherService } from './services/account-event-publisher.service';
+
 import { CreatePaymentHandler } from './commands/handlers/create-payment.handler';
 import { PaymentService } from './services/payment.service';
 import { PaymentCreateEventHandler } from './events/payment-created-event.handler';
@@ -32,14 +32,9 @@ export const Sagas = [];
     ...CommandHandlers,
     ...QueryHandlers,
     ...EventHandlers,
-    AccountEventPublisherService,
+
     PaymentService,
   ],
-  exports: [
-    ...CommandHandlers,
-    ...QueryHandlers,
-    ...EventHandlers,
-    AccountEventPublisherService,
-  ],
+  exports: [...CommandHandlers, ...QueryHandlers, ...EventHandlers],
 })
 export class ApplicationModule {}
