@@ -42,4 +42,18 @@ export class PrismaAccountRepository implements IAccountRepositoryPort {
 
     return account;
   }
+
+  async decrementBalance(accountId: string, amount: number): Promise<void> {
+    const updatedFrom = await this.prisma.account.update({
+      where: { id: accountId },
+      data: { balance: { decrement: amount } },
+    });
+  }
+
+  async incrementBalance(accountId: string, amount: number): Promise<void> {
+    const updatedFrom = await this.prisma.account.update({
+      where: { id: accountId },
+      data: { balance: { increment: amount } },
+    });
+  }
 }
