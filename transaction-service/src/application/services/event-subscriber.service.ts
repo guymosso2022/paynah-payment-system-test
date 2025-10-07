@@ -40,4 +40,21 @@ export class EventSubscriberService implements IEventSubscriberPort {
       ),
     );
   }
+
+  async consumeAccountPayment(
+    sourceAccountId: string,
+    amount: number,
+    status: TransactionStatus,
+    paymentId: string,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new CreateTransactionCommand(
+        TransactionType.PAYMENT,
+        status,
+        amount,
+        sourceAccountId,
+        paymentId,
+      ),
+    );
+  }
 }

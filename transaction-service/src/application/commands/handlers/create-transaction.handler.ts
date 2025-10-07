@@ -37,7 +37,6 @@ export class CreateTransactionHandler
       command.accountId ? AccountId.create(command.accountId) : undefined,
       command.paymentId ? PaymentId.create(command.paymentId) : undefined,
     );
-    // return await this.transactionRepository.save(transaction);
-    return transaction;
+    return await this.transactionRepository.save(transaction);
   }
 }

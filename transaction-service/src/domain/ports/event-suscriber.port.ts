@@ -14,4 +14,12 @@ export interface IEventSubscriberPort {
     type: string,
     status: string,
   ): Promise<void>;
+
+  consumeAccountPayment(
+    sourceAccountId: string,
+    amount: number,
+    currency: string,
+    status: string,
+    paymentId: string,
+  ): Promise<void>;
 }
