@@ -8,9 +8,11 @@ import {
 import { Account } from 'src/domain/entities/account.entity';
 import { Money } from 'src/domain/value-objects/money.vo';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
-import { AccountNotFoundApplicationException } from 'src/application/exceptions/account-not-found.exception';
-import { AccountEventPublisherService } from 'src/application/services/account-event-publisher.service';
 import { AccountCreditedEvent } from 'src/domain/events/account-credited.event';
+import {
+  IEVENT_PUBLISHER_PORT,
+  IEventPublisherPort,
+} from 'src/domain/ports/event-publisher.port';
 
 @CommandHandler(CreditAccountCommand)
 export class CreditAccountHandler
@@ -19,23 +21,36 @@ export class CreditAccountHandler
   constructor(
     @Inject(IACCOUNT_REPOSITORY_PORT)
     private readonly accountRepository: IAccountRepositoryPort,
-    private readonly accountEventPublisherService: AccountEventPublisherService,
+    @Inject(IEVENT_PUBLISHER_PORT)
+    private readonly eventPublisher: IEventPublisherPort,
   ) {}
-  async execute(command: CreditAccountCommand): Promise<Account> {
+
+  async execute(command: CreditAccountCommand): Promise<Account | void> {
     const account = await this.accountRepository.findOneById(
       AccountId.create(command.accountId),
     );
+
     if (!account) {
-      throw new AccountNotFoundApplicationException(
-        `Account ${command.accountId} not found`,
+      const failedEvent = new AccountCreditedEvent(
+        command.accountId,
+        0,
+        'CREDIT',
+        'FAILED',
       );
+      await this.eventPublisher.publish(failedEvent);
+      return;
     }
+
     account.credit(Money.from(command.amount, command.currency));
-    await this.accountEventPublisherService.publishDomainEvents(
-      account,
-      AccountCreditedEvent,
+
+    const successEvent = new AccountCreditedEvent(
+      account.getId().value,
+      account.getBalance().value,
+      'CREDIT',
+      'SUCCESS',
     );
-    const updatedAccount = await this.accountRepository.save(account);
-    return updatedAccount;
+    await this.eventPublisher.publish(successEvent);
+
+    return this.accountRepository.save(account);
   }
 }

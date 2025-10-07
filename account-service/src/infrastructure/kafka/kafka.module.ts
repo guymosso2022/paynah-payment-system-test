@@ -7,13 +7,16 @@ import { Partitioners } from 'kafkajs';
 import { IUNIQUE_ID_GENERATOR_PORT } from 'src/domain/ports/unique-id-generator.port';
 import { UuidV4Generator } from '../uuid/uuid-v4-generator';
 import { ConfigService } from '@nestjs/config';
+import { KafkaConsumerService } from './services/kafka-consumer.service';
+import { EventSubscriberService } from 'src/application/services/event-subscriber.service';
+import { IEVENT_SUBSCRIBER_PORT } from 'src/domain/ports/event-subcriber.port';
 
 @Module({
   imports: [
     CqrsModule,
     ClientsModule.register([
       {
-        name: 'KAFKA_SERVICE', // ✅ Token pour injection
+        name: 'KAFKA_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {
@@ -40,7 +43,18 @@ import { ConfigService } from '@nestjs/config';
     },
     EventFactory,
     KafkaProducerService,
+    KafkaConsumerService,
+    EventSubscriberService,
+    {
+      provide: IEVENT_SUBSCRIBER_PORT,
+      useExisting: EventSubscriberService,
+    },
   ],
-  exports: [ClientsModule, KafkaProducerService, EventFactory],
+  exports: [
+    ClientsModule,
+    KafkaProducerService,
+    EventSubscriberService,
+    EventFactory,
+  ],
 })
 export class kafkaModule {}

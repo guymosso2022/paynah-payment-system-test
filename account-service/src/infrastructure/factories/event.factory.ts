@@ -8,6 +8,8 @@ import { AccountCreditedIntegrationEvent } from '../events/account-credited-inte
 import { KafkaTopicNotFoundException } from '../exceptions/kafka-topicnot-found.exception';
 import { AccountDebitedEvent } from 'src/domain/events/account-debited.event';
 import { AccountDebitedIntegrationEvent } from '../events/account-debited-integration.event';
+import { PaymentCreatedIntegrationEvent } from '../events/payment-created-integration.events';
+import { PaymentCreatedEvent } from 'src/domain/events/payment-created.event';
 
 export class EventFactory {
   constructor(
@@ -21,7 +23,8 @@ export class EventFactory {
         this.uniqueIdGenerator.generate(),
         domainEvent.accountId,
         domainEvent.balance,
-        'CREDIT',
+        domainEvent.type,
+        domainEvent.status,
         new Date(),
       );
     }
@@ -30,7 +33,20 @@ export class EventFactory {
         this.uniqueIdGenerator.generate(),
         domainEvent.accountId,
         domainEvent.balance,
-        'DEBIT',
+        domainEvent.type,
+        domainEvent.status,
+        new Date(),
+      );
+    }
+    if (domainEvent instanceof PaymentCreatedEvent) {
+      return new PaymentCreatedIntegrationEvent(
+        this.uniqueIdGenerator.generate(),
+        domainEvent.sourceAccountId,
+        domainEvent.targetAccountId,
+        domainEvent.amount,
+        domainEvent.currency,
+        domainEvent.status,
+        domainEvent.paymentId,
         new Date(),
       );
     }

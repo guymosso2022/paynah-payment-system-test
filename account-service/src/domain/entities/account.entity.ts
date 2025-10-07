@@ -3,8 +3,6 @@ import { InsufficientFundsDomainException } from '../exceptions/insufficient-fun
 import { IMoneyCalculator } from '../ports/money-calculator';
 import { AccountId } from '../value-objects/account-id.vo';
 import { Money } from '../value-objects/money.vo';
-import { AccountCreditedEvent } from '../events/account-credited.event';
-import { AccountDebitedEvent } from '../events/account-debited.event';
 
 export class Account extends AggregateRoot {
   private constructor(
@@ -31,7 +29,6 @@ export class Account extends AggregateRoot {
   credit(amount: Money): void {
     this.balance = this.calculator.add(this.balance, amount);
     this.updatedAt = new Date();
-    this.apply(new AccountCreditedEvent(this.id.value, amount.value));
   }
 
   debit(amount: Money): void {
@@ -40,7 +37,6 @@ export class Account extends AggregateRoot {
     }
     this.balance = this.calculator.subtract(this.balance, amount);
     this.updatedAt = new Date();
-    this.apply(new AccountDebitedEvent(this.id.value, amount.value));
   }
 
   getBalance(): Money {

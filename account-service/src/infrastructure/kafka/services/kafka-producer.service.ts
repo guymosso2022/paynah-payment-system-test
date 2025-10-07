@@ -10,6 +10,8 @@ export class KafkaProducerService implements OnModuleInit {
   private readonly topicMapping: Record<string, string> = {
     AccountCreditedIntegrationEvent: 'account-credited-integration-events',
     AccountDebitedIntegrationEvent: 'account-debited-integration-events',
+    PaymentCreatedIntegrationEvent:
+      'payment-account-created-integration-events',
   };
 
   constructor(

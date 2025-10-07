@@ -6,15 +6,25 @@ import { CreditAccountHandler } from './commands/handlers/credit-account.handler
 import { DebitAccountHandler } from './commands/handlers/debit-account.hanlder';
 import { GetAccountBalanceHandler } from './queries/handlers/get-account-balance.handler';
 import { AccountEventPublisherService } from './services/account-event-publisher.service';
+import { CreatePaymentHandler } from './commands/handlers/create-payment.handler';
+import { PaymentService } from './services/payment.service';
+import { PaymentCreateEventHandler } from './events/payment-created-event.handler';
+import { AccountCreditedEventHandler } from './events/account-credited-event.handler';
+import { AccountDebitedEventHandler } from './events/account-debited-event.handler';
 
 export const CommandHandlers = [
   CreateAccountHandler,
   CreditAccountHandler,
   DebitAccountHandler,
+  CreatePaymentHandler,
 ];
 
 export const QueryHandlers = [GetAccountBalanceHandler];
-export const EventHandlers = [];
+export const EventHandlers = [
+  PaymentCreateEventHandler,
+  AccountCreditedEventHandler,
+  AccountDebitedEventHandler,
+];
 export const Sagas = [];
 @Module({
   imports: [CqrsModule, InfrastructureModule],
@@ -23,6 +33,7 @@ export const Sagas = [];
     ...QueryHandlers,
     ...EventHandlers,
     AccountEventPublisherService,
+    PaymentService,
   ],
   exports: [
     ...CommandHandlers,
