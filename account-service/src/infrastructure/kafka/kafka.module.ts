@@ -20,8 +20,8 @@ import { IEVENT_SUBSCRIBER_PORT } from 'src/domain/ports/event-subcriber.port';
         transport: Transport.KAFKA,
         options: {
           client: {
-            brokers: ['localhost:9092'],
-            clientId: 'account-service',
+            brokers: (process.env.KAFKA_BROKERS || 'localhost:9092').split(','),
+            clientId: process.env.KAFKA_CLIENT_ID || 'payment-service',
           },
           producer: {
             createPartitioner: Partitioners.LegacyPartitioner,
