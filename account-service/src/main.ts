@@ -17,7 +17,7 @@ async function bootstrap() {
           allowAutoTopicCreation: true,
         },
         subscribe: {
-          fromBeginning: false,
+          fromBeginning: true,
         },
       },
     },
