@@ -13,7 +13,6 @@ import { AccountId } from 'src/domain/value-objects/account-id.vo';
 import { Payment } from 'src/domain/entities/payment.entity';
 import { Money } from 'src/domain/value-objects/money.vo';
 import { PaymentId } from 'src/domain/value-objects/payment-id.vo';
-import { PaymentEventPublisherService } from 'src/application/services/payment-event-publisher.service';
 import { PaymentCreatedEvent } from 'src/domain/events/payment-created.event';
 import {
   IEVENT_PUBLISHER_PORT,

@@ -7,6 +7,9 @@ import { ConfigService } from '@nestjs/config';
 import { IUNIQUE_ID_GENERATOR_PORT } from 'src/domain/ports/unique-id-generator.port';
 import { UuidV4Generator } from '../uuid/uuid-v4-generator.service';
 import { KafkaEventPublisher } from './services/kafka-producer.service';
+import { KafkaConsumerService } from './services/kafka-consumer.service';
+import { EventSubscriberService } from 'src/application/services/event-subscriber.service';
+import { IEVENT_SUBSCRIBER_PORT } from 'src/domain/ports/event-subscriber.port';
 
 @Module({
   imports: [
@@ -40,7 +43,18 @@ import { KafkaEventPublisher } from './services/kafka-producer.service';
       provide: IUNIQUE_ID_GENERATOR_PORT,
       useClass: UuidV4Generator,
     },
+    KafkaConsumerService,
+    EventSubscriberService,
+    {
+      provide: IEVENT_SUBSCRIBER_PORT,
+      useExisting: EventSubscriberService,
+    },
   ],
-  exports: [KafkaEventPublisher, ClientsModule, EventFactory],
+  exports: [
+    KafkaEventPublisher,
+    ClientsModule,
+    EventFactory,
+    EventSubscriberService,
+  ],
 })
 export class KafkaModule {}

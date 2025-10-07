@@ -42,7 +42,27 @@ export class PrismaPaymentRepository implements IPaymentRepositoryPort {
     return payment;
   }
 
-  findOne(id: PaymentId): Promise<Payment | null> {
-    throw new Error('Method not implemented.');
+  // findOne(id: PaymentId): Promise<Payment | null> {
+  //   throw new Error('Method not implemented.');
+  // }
+
+  async findOne(paymentId: PaymentId): Promise<Payment | null> {
+    const record = await this.prisma.payment.findUnique({
+      where: { id: paymentId.getValue() },
+    });
+
+    if (!record) return null;
+
+    const payment = Payment.reconstitute({
+      id: paymentId,
+      sourceAccountId: new AccountId(record.sourceAccountId),
+      targetAccountId: new AccountId(record.targetAccountId),
+      amount: Money.from(record.amount, record.currency ?? 'XOF'),
+      status: record.status as PaymentStatus,
+      createdAt: record.createdAt ?? new Date(),
+      updatedAt: record.updatedAt ?? new Date(),
+    });
+
+    return payment;
   }
 }
