@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PrismaTransactionRepository implements ITransactionRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
   async save(transaction: Transaction): Promise<Transaction> {
-    const record = await this.prisma.transaction.upsert({
+    await this.prisma.transaction.upsert({
       where: { id: transaction.getId().value },
       update: {
         amount: transaction.getAmount().value,
@@ -16,6 +16,7 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
         status: transaction.getStatus(),
         accountId: transaction.getAccountId()?.value,
         paymentId: transaction.getPaymentId()?.value,
+        targetAccountId: transaction.getTargetAccountId()?.value,
         currency: transaction.getAmount().currency,
         description: transaction.getDescription(),
         updatedAt: new Date(),
