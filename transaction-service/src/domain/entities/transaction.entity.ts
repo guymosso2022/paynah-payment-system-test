@@ -13,6 +13,7 @@ export class Transaction {
     private amount: Money,
     private accountId?: AccountId,
     private paymentId?: PaymentId,
+    private targetAccountId?: AccountId,
     private description?: string,
     public createdAt?: Date,
     public updatedAt?: Date,
@@ -25,6 +26,7 @@ export class Transaction {
     amount: Money,
     accountId?: AccountId,
     paymentId?: PaymentId,
+    targetAccountId?: AccountId,
     description?: string,
   ): Transaction {
     return new Transaction(
@@ -34,6 +36,7 @@ export class Transaction {
       amount,
       accountId,
       paymentId,
+      targetAccountId,
       description,
       new Date(),
       new Date(),
@@ -53,6 +56,10 @@ export class Transaction {
 
   getPaymentId(): PaymentId | undefined {
     return this.paymentId;
+  }
+
+  getTargetAccountId(): AccountId | undefined {
+    return this.accountId;
   }
 
   getType(): TransactionType {

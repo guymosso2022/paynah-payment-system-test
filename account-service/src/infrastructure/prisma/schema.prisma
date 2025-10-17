@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Account {
-  id        String   @id @default(uuid()) @db.Uuid
+  id        String   @id  @db.Uuid
   balance   Int
   currency  String?    @db.VarChar()
   createdAt DateTime?  @default(now())

@@ -69,6 +69,14 @@ export class KafkaConsumerService implements OnModuleInit {
     try {
       switch (topic) {
         case 'account-debited-integration-events':
+          this.logger.log(`[${topic}] message reçu: ${JSON.stringify(parsed)}`);
+          await this.subscriber.consumeAccountDebited(
+            parsed.payload.accountId,
+            parsed.payload.amount,
+            parsed.payload.type,
+            parsed.payload.status,
+          );
+          break;
         case 'account-credited-integration-events':
           this.logger.log(`[${topic}] message reçu: ${JSON.stringify(parsed)}`);
           await this.subscriber.consumeAccountCredited(
@@ -87,6 +95,7 @@ export class KafkaConsumerService implements OnModuleInit {
             parsed.payload.currency,
             parsed.payload.status,
             parsed.payload.paymentId,
+            parsed.payload.targetAccountId,
           );
           break;
 

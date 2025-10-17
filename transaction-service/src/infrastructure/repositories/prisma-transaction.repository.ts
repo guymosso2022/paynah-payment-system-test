@@ -16,6 +16,7 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
         status: transaction.getStatus(),
         accountId: transaction.getAccountId()?.value,
         paymentId: transaction.getPaymentId()?.value,
+        currency: transaction.getAmount().currency,
         description: transaction.getDescription(),
         updatedAt: new Date(),
       },
@@ -28,11 +29,13 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
         accountId: transaction.getAccountId()?.value,
         paymentId: transaction.getPaymentId()?.value,
         currency: transaction.getAmount().currency,
+        targetAccountId: transaction.getTargetAccountId()?.value,
         description: transaction.getDescription(),
         createdAt: new Date(),
         updatedAt: new Date(),
       },
     });
+
     return transaction;
   }
 

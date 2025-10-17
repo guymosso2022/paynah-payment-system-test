@@ -10,5 +10,6 @@ export class CreateTransactionCommand implements ICommand {
     public readonly currency: string,
     public readonly accountId?: string,
     public readonly paymentId?: string,
+    public readonly targetAccountId?: string,
   ) {}
 }

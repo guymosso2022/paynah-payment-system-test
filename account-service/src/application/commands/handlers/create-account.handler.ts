@@ -35,7 +35,7 @@ export class CreateAccountHandler
     const initialBalance = Money.from(command.amount || 0);
     const account = Account.create(accountId, initialBalance, this.calculator);
 
-    const savedAccount: Account = await this.accountRepository.save(account);
+    const savedAccount = await this.accountRepository.save(account);
     return savedAccount;
   }
 }

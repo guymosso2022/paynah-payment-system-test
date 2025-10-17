@@ -23,6 +23,7 @@ model Transaction {
   status      String   @db.VarChar()
   accountId   String?  @db.VarChar() @map("account_id")
   paymentId   String?  @db.VarChar() @map("payment_id")
+  targetAccountId String? @db.VarChar() @map("target_account_id")
   description String?  @db.VarChar()
   createdAt   DateTime? @default(now()) @map("created_at")
   updatedAt   DateTime? @updatedAt  @map("updated_at")
