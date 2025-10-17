@@ -36,7 +36,11 @@ export class CreateTransactionHandler
       Money.from(command.amount, command.currency),
       command.accountId ? AccountId.create(command.accountId) : undefined,
       command.paymentId ? PaymentId.create(command.paymentId) : undefined,
+      command.targetAccountId
+        ? AccountId.create(command.targetAccountId)
+        : undefined,
     );
+    console.log('transaction', transaction);
     return await this.transactionRepository.save(transaction);
   }
 }

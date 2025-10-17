@@ -20,6 +20,7 @@ export class EventSubscriberService implements IEventSubscriberPort {
         type as TransactionType,
         status,
         amount,
+        'XOF',
         accountId,
       ),
     );
@@ -36,6 +37,7 @@ export class EventSubscriberService implements IEventSubscriberPort {
         type as TransactionType,
         status,
         amount,
+        'XOF',
         accountId,
       ),
     );
@@ -44,16 +46,20 @@ export class EventSubscriberService implements IEventSubscriberPort {
   async consumeAccountPayment(
     sourceAccountId: string,
     amount: number,
+    currency: string,
     status: TransactionStatus,
     paymentId: string,
+    targetAccountId: string,
   ): Promise<void> {
     await this.commandBus.execute(
       new CreateTransactionCommand(
         TransactionType.PAYMENT,
         status,
         amount,
+        currency,
         sourceAccountId,
         paymentId,
+        targetAccountId,
       ),
     );
   }

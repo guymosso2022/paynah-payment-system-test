@@ -8,8 +8,9 @@ import { MoneyCalculator } from '../../domain/services/money-calculator.service'
 @Injectable()
 export class PrismaAccountRepository implements IAccountRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
+
   async save(account: Account): Promise<Account> {
-    await this.prisma.account.upsert({
+    const accountSaved = await this.prisma.account.upsert({
       where: { id: account.id.value },
       update: {
         balance: account.getBalance().value,
@@ -17,6 +18,7 @@ export class PrismaAccountRepository implements IAccountRepositoryPort {
         updatedAt: account.updatedAt,
       },
       create: {
+        id: account.getId().value,
         balance: account.getBalance().value,
         currency: account.getBalance().getCurrency(),
         createdAt: account.createdAt,

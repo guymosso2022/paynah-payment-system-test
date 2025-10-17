@@ -21,5 +21,6 @@ export interface IEventSubscriberPort {
     currency: string,
     status: string,
     paymentId: string,
+    targetAccountId: string,
   ): Promise<void>;
 }
