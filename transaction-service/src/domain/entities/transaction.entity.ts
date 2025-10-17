@@ -59,7 +59,7 @@ export class Transaction {
   }
 
   getTargetAccountId(): AccountId | undefined {
-    return this.accountId;
+    return this.targetAccountId;
   }
 
   getType(): TransactionType {

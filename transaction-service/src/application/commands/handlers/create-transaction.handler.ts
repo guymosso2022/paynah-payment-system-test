@@ -40,7 +40,6 @@ export class CreateTransactionHandler
         ? AccountId.create(command.targetAccountId)
         : undefined,
     );
-    console.log('transaction', transaction);
     return await this.transactionRepository.save(transaction);
   }
 }
