@@ -36,6 +36,7 @@ export class DebitAccountHandler
         0,
         'DEBIT',
         'FAILED',
+        command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
       return;
@@ -47,6 +48,7 @@ export class DebitAccountHandler
       command.amount,
       'DEBIT',
       'SUCCESS',
+      command.currency,
     );
 
     await this.eventPublisher.publish(successEvent);

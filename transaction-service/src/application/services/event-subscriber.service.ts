@@ -14,13 +14,14 @@ export class EventSubscriberService implements IEventSubscriberPort {
     amount: number,
     type: string,
     status: TransactionStatus,
+    currency: string,
   ): Promise<void> {
     await this.commandBus.execute(
       new CreateTransactionCommand(
         type as TransactionType,
         status,
         amount,
-        'XOF',
+        currency,
         accountId,
       ),
     );
@@ -31,13 +32,14 @@ export class EventSubscriberService implements IEventSubscriberPort {
     amount: number,
     type: TransactionType,
     status: TransactionStatus,
+    currency: string,
   ): Promise<void> {
     await this.commandBus.execute(
       new CreateTransactionCommand(
         type as TransactionType,
         status,
         amount,
-        'XOF',
+        currency,
         accountId,
       ),
     );

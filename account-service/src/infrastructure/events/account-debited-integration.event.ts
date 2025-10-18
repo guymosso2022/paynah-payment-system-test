@@ -5,6 +5,7 @@ export class AccountDebitedIntegrationEvent {
     public readonly amount: number,
     public readonly type: string,
     public readonly status: string,
+    public readonly currency: string,
     public readonly occurredOn: Date,
   ) {}
 }
