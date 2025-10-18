@@ -75,6 +75,7 @@ export class KafkaConsumerService implements OnModuleInit {
             parsed.payload.amount,
             parsed.payload.type,
             parsed.payload.status,
+            parsed.payload.currency,
           );
           break;
         case 'account-credited-integration-events':
@@ -84,6 +85,7 @@ export class KafkaConsumerService implements OnModuleInit {
             parsed.payload.amount,
             parsed.payload.type,
             parsed.payload.status,
+            parsed.payload.currency,
           );
           break;
 

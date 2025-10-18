@@ -6,6 +6,7 @@ export interface IEventSubscriberPort {
     amount: number,
     type: string,
     status: string,
+    currency: string,
   ): Promise<void>;
 
   consumeAccountDebited(
@@ -13,6 +14,7 @@ export interface IEventSubscriberPort {
     amount: number,
     type: string,
     status: string,
+    currency: string,
   ): Promise<void>;
 
   consumeAccountPayment(

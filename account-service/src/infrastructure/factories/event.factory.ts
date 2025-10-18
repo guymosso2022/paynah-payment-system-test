@@ -25,6 +25,7 @@ export class EventFactory {
         domainEvent.balance,
         domainEvent.type,
         domainEvent.status,
+        domainEvent.currency,
         new Date(),
       );
     }
@@ -35,6 +36,7 @@ export class EventFactory {
         domainEvent.balance,
         domainEvent.type,
         domainEvent.status,
+        domainEvent.currency,
         new Date(),
       );
     }

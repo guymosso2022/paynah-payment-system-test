@@ -36,6 +36,7 @@ export class CreditAccountHandler
         0,
         'CREDIT',
         'FAILED',
+        command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
       return;
@@ -48,6 +49,7 @@ export class CreditAccountHandler
       command.amount,
       'CREDIT',
       'SUCCESS',
+      command.currency,
     );
     await this.eventPublisher.publish(successEvent);
 
