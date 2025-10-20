@@ -6,6 +6,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { AccountNotFoundApplicationException } from 'src/application/exceptions/account-not-found.exception';
+import { InsufficientFundsApplicationException } from 'src/application/exceptions/insufficient-funds-application.exception';
+import { InsufficientFundsDomainException } from 'src/domain/exceptions/insufficient-funds-domain.exception';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
@@ -24,6 +27,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
         typeof res === 'string'
           ? res
           : ((res as any).message ?? JSON.stringify(res));
+    } else if (exception instanceof InsufficientFundsDomainException) {
+      status = HttpStatus.BAD_REQUEST;
+      message = exception.message;
+    } else if (exception instanceof AccountNotFoundApplicationException) {
+      status = HttpStatus.NOT_FOUND;
+      message = exception.message;
+    } else if (exception instanceof InsufficientFundsApplicationException) {
+      status = HttpStatus.BAD_REQUEST;
     } else if (exception instanceof Error) {
       message = exception.message;
     }

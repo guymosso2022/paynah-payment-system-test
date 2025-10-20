@@ -13,6 +13,7 @@ import {
   IEVENT_PUBLISHER_PORT,
   IEventPublisherPort,
 } from 'src/domain/ports/event-publisher.port';
+import { AccountNotFoundApplicationException } from 'src/application/exceptions/account-not-found.exception';
 
 @CommandHandler(CreditAccountCommand)
 export class CreditAccountHandler
@@ -39,7 +40,7 @@ export class CreditAccountHandler
         command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
-      return;
+      throw new AccountNotFoundApplicationException('Account not found');
     }
 
     account.credit(Money.from(command.amount, command.currency));
