@@ -13,6 +13,8 @@ import {
   IEVENT_PUBLISHER_PORT,
   IEventPublisherPort,
 } from 'src/domain/ports/event-publisher.port';
+import { InsufficientFundsApplicationException } from 'src/application/exceptions/insufficient-funds-application.exception';
+import { AccountNotFoundApplicationException } from 'src/application/exceptions/account-not-found.exception';
 
 @CommandHandler(DebitAccountCommand)
 export class DebitAccountHandler
@@ -39,7 +41,7 @@ export class DebitAccountHandler
         command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
-      return;
+      throw new AccountNotFoundApplicationException('Account not found');
     }
     const amount = Money.from(command.amount, command.currency);
     if (account.getBalance().lessThan(amount)) {
@@ -51,7 +53,7 @@ export class DebitAccountHandler
         command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
-      return;
+      throw new InsufficientFundsApplicationException('Insufficient funds');
     }
     account.debit(Money.from(command.amount, command.currency));
 
