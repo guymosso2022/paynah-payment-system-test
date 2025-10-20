@@ -20,7 +20,20 @@ export class Money {
     return this.currency;
   }
 
+  lessThan(other: Money): boolean {
+    this.ensureSameCurrency(other);
+    return this.value < other.value;
+  }
+
   static from(amount: number, currency: string = 'XOF'): Money {
     return new Money(amount, currency);
+  }
+
+  private ensureSameCurrency(other: Money) {
+    if (this.currency !== other.currency) {
+      throw new Error(
+        `Currency mismatch: ${this.currency} vs ${other.currency}`,
+      );
+    }
   }
 }

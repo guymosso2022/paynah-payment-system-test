@@ -35,7 +35,19 @@ export class DebitAccountHandler
         command.accountId,
         0,
         'DEBIT',
-        'FAILED',
+        'FAILED_NOT_FOUND',
+        command.currency,
+      );
+      await this.eventPublisher.publish(failedEvent);
+      return;
+    }
+    const amount = Money.from(command.amount, command.currency);
+    if (account.getBalance().lessThan(amount)) {
+      const failedEvent = new AccountDebitedEvent(
+        account.getId().value,
+        command.amount,
+        'DEBIT',
+        'FAILED_INSUFFICIENT_FUNDS',
         command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
