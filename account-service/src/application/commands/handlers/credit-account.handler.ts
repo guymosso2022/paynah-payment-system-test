@@ -35,7 +35,7 @@ export class CreditAccountHandler
         command.accountId,
         0,
         'CREDIT',
-        'FAILED',
+        'FAILED_NOT_FOUND',
         command.currency,
       );
       await this.eventPublisher.publish(failedEvent);
