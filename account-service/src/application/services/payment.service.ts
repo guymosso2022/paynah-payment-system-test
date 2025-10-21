@@ -1,10 +1,11 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   IACCOUNT_REPOSITORY_PORT,
   IAccountRepositoryPort,
 } from 'src/domain/ports/account.port';
 import { AccountId } from 'src/domain/value-objects/account-id.vo';
 
+@Injectable()
 export class PaymentService {
   constructor(
     @Inject(IACCOUNT_REPOSITORY_PORT)
