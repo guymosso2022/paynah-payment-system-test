@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AccountCreditedEvent } from 'src/domain/events/account-credited.event';
 import {
   IUNIQUE_ID_GENERATOR_PORT,
@@ -11,6 +11,7 @@ import { AccountDebitedIntegrationEvent } from '../events/account-debited-integr
 import { PaymentCreatedIntegrationEvent } from '../events/payment-created-integration.events';
 import { PaymentCreatedEvent } from 'src/domain/events/payment-created.event';
 
+@Injectable()
 export class EventFactory {
   constructor(
     @Inject(IUNIQUE_ID_GENERATOR_PORT)
