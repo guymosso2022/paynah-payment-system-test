@@ -29,8 +29,6 @@ export class TransactionController {
     const page = Number(pagination.page ?? 1);
     const limit = Number(pagination.limit ?? 20);
 
-    const accountIdVO = AccountId.create(accountId);
-
     return this.queryBus.execute(
       new GetTransactionsByAccountIdQuery(accountId, page, limit),
     );

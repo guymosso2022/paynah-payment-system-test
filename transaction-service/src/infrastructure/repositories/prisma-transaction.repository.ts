@@ -40,6 +40,73 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
     return transaction;
   }
 
+  // async findById(
+  //   accountId: AccountId,
+  //   page = 1,
+  //   limit = 20,
+  // ): Promise<{
+  //   data: {
+  //     id: string;
+  //     amount: number;
+  //     currency: string;
+  //     type: string;
+  //     status: string;
+  //     accountId: string | null;
+  //     paymentId: string | null;
+  //     description: string | null;
+  //     createdAt: Date | null;
+  //     updatedAt: Date | null;
+  //   }[];
+  //   meta: {
+  //     firstPage: number;
+  //     total: number;
+  //     lastPage: number;
+  //     currentPage: number;
+  //     itemsPerPage: number;
+  //   };
+  // }> {
+  //   if (!accountId) {
+  //     throw new Error('AccountId is required');
+  //   }
+
+  //   const safePage = page && page > 0 ? page : 1;
+  //   const safeLimit = limit && limit > 0 ? limit : 20;
+  //   const skip = (safePage - 1) * safeLimit;
+
+  //   const [records, total] = await Promise.all([
+  //     this.prisma.transaction.findMany({
+  //       where: {
+  //         OR: [
+  //           { accountId: accountId.getValue() },
+  //           { targetAccountId: accountId.getValue() },
+  //         ],
+  //       },
+
+  //       skip,
+  //       take: safeLimit,
+  //       orderBy: { createdAt: 'desc' },
+  //     }),
+  //     this.prisma.transaction.count({
+  //       where: { accountId: accountId.getValue() },
+  //     }),
+  //   ]);
+
+  //   const meta = {
+  //     firstPage: 1,
+  //     total: total,
+  //     lastPage: Math.ceil(total / safeLimit),
+  //     currentPage: safePage,
+  //     itemsPerPage: safeLimit,
+  //   };
+
+  //   const transactions = records.map((record) => ({
+  //     ...record,
+  //     createdAt: record.createdAt ? new Date(record.createdAt) : null,
+  //     updatedAt: record.updatedAt ? new Date(record.updatedAt) : null,
+  //   }));
+
+  //   return { data: transactions, meta };
+  // }
   async findById(
     accountId: AccountId,
     page = 1,
@@ -69,35 +136,56 @@ export class PrismaTransactionRepository implements ITransactionRepositoryPort {
       throw new Error('AccountId is required');
     }
 
-    const safePage = page && page > 0 ? page : 1;
-    const safeLimit = limit && limit > 0 ? limit : 20;
+    const safePage = page > 0 ? page : 1;
+    const safeLimit = limit > 0 ? limit : 20;
     const skip = (safePage - 1) * safeLimit;
+
+    const whereClause = {
+      OR: [
+        { accountId: accountId.getValue() },
+        { targetAccountId: accountId.getValue() },
+      ],
+    };
 
     const [records, total] = await Promise.all([
       this.prisma.transaction.findMany({
-        where: { accountId: accountId.getValue() },
+        where: whereClause,
         skip,
         take: safeLimit,
         orderBy: { createdAt: 'desc' },
       }),
-      this.prisma.transaction.count({
-        where: { accountId: accountId.getValue() },
-      }),
+      this.prisma.transaction.count({ where: whereClause }),
     ]);
 
     const meta = {
       firstPage: 1,
-      total: total,
+      total,
       lastPage: Math.ceil(total / safeLimit),
       currentPage: safePage,
       itemsPerPage: safeLimit,
     };
 
-    const transactions = records.map((record) => ({
-      ...record,
-      createdAt: record.createdAt ? new Date(record.createdAt) : null,
-      updatedAt: record.updatedAt ? new Date(record.updatedAt) : null,
-    }));
+    const transactions = records.map((record) => {
+      let direction: 'OUTGOING' | 'INCOMING';
+
+      if (record.type === 'DEBIT') {
+        direction =
+          record.accountId === accountId.getValue() ? 'OUTGOING' : 'INCOMING';
+      } else if (record.type === 'CREDIT') {
+        direction =
+          record.accountId === accountId.getValue() ? 'INCOMING' : 'OUTGOING';
+      } else {
+        direction =
+          record.accountId === accountId.getValue() ? 'OUTGOING' : 'INCOMING';
+      }
+
+      return {
+        ...record,
+        direction,
+        createdAt: record.createdAt ? new Date(record.createdAt) : null,
+        updatedAt: record.updatedAt ? new Date(record.updatedAt) : null,
+      };
+    });
 
     return { data: transactions, meta };
   }
