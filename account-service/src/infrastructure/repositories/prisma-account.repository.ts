@@ -10,7 +10,7 @@ export class PrismaAccountRepository implements IAccountRepositoryPort {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(account: Account): Promise<Account> {
-    const accountSaved = await this.prisma.account.upsert({
+    await this.prisma.account.upsert({
       where: { id: account.id.value },
       update: {
         balance: account.getBalance().value,
