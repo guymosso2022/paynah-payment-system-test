@@ -6,7 +6,7 @@ export const ITRANSACTION_REPOSITORY_PORT = Symbol(
 );
 export interface ITransactionRepositoryPort {
   save(transaction: Transaction): Promise<Transaction>;
-  findById(
+  findByAccountId(
     accountId: AccountId,
     skip?: number,
     limit?: number,
