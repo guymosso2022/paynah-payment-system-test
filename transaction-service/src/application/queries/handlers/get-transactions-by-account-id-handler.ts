@@ -42,6 +42,6 @@ export class GetTransactionsByAccountIdHandler
     const skip = (page - 1) * limit;
     const accountIdVO = AccountId.create(accountId);
 
-    return this.transactionRepository.findById(accountIdVO, skip, limit);
+    return this.transactionRepository.findByAccountId(accountIdVO, skip, limit);
   }
 }
